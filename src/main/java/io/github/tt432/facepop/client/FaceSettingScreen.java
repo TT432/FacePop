@@ -8,6 +8,9 @@ import net.minecraft.network.chat.Component;
  * @author TT432
  */
 public class FaceSettingScreen extends Screen {
+    int clicked;
+    int select;
+
     protected FaceSettingScreen() {
         super(Component.empty());
     }
@@ -28,8 +31,8 @@ public class FaceSettingScreen extends Screen {
         var centerY = height / 2;
         int size = 60;
 
-        var select = FaceSelectorScreen.selectFace(mouseX, mouseY, centerX, centerY, size);
-        FaceSelectorScreen.renderWheel(guiGraphics, centerX, centerY, size, select);
+        select = FaceSelectorScreen.selectFace(mouseX, mouseY, centerX, centerY, size);
+        FaceSelectorScreen.renderWheel(guiGraphics, centerX, centerY, size, select, clicked);
 
         var lineStart = 170;
         int lineWight = 3;
@@ -38,14 +41,18 @@ public class FaceSettingScreen extends Screen {
 
         guiGraphics.fillGradient(lineStart, minY, lineStart + lineWight, maxY, black, black);
 
-        // left
         guiGraphics.fillGradient(minX, minY, minX + lineWight, maxY, black, black);
-        // up
         guiGraphics.fillGradient(minX, minY, maxX, minY + lineWight, black, black);
-        // right
         guiGraphics.fillGradient(maxX - lineWight, minY, maxX, maxY, black, black);
-        // bottom
         guiGraphics.fillGradient(minX, maxY - lineWight, maxX, maxY, black, black);
+    }
+
+    @Override
+    public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
+        if (select != 0)
+            clicked = select;
+
+        return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
 
     @Override

@@ -3,9 +3,14 @@ package io.github.tt432.facepop.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import io.github.tt432.facepop.Facepop;
+import io.github.tt432.facepop.common.capability.FaceCapability;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -33,36 +38,78 @@ public class FaceSelectorScreen extends Screen {
 
         select = selectFace(mouseX, mouseY, centerX, centerY, 100);
 
-        renderWheel(guiGraphics, centerX, centerY, 100, select);
+        renderWheel(guiGraphics, centerX, centerY, 100, select, 0);
     }
 
-    public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select) {
+    public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select, int clicked) {
         int half = size / 2;
-
-        int white = 0xFF_FF_FF_FF;
-        int red = 0xFF_FF_00_00;
 
         innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX, centerX + size, centerY - half, centerY + half,
                 0.5F, 1F, 0F, 0.5F,
-                select == 2 ? red : white);
+                getArgb(select, clicked, 2));
         innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX - half, centerX + half, centerY, centerY + size,
                 0F, 0.5F, 0.5F, 1F,
-                select == 3 ? red : white);
+                getArgb(select, clicked, 3));
         innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX - size, centerX, centerY - half, centerY + half,
                 0.5F, 1F, 0.5F, 1F,
-                select == 4 ? red : white);
+                getArgb(select, clicked, 4));
         innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX - half, centerX + half, centerY - size, centerY,
                 0F, 0.5F, 0F, 0.5F,
-                select == 5 ? red : white);
+                getArgb(select, clicked, 5));
+
+
+        Minecraft mc = Minecraft.getInstance();
+        mc.player.getCapability(FaceCapability.CAPABILITY).ifPresent(cap -> {
+            RegistryAccess registryAccess = mc.level.registryAccess();
+
+            renderFaceIcon(guiGraphics, centerX, centerY, 1, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX + size / 2, centerY, 2, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX, centerY + size / 2, 3, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX - size / 2, centerY, 4, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX, centerY - size / 2, 5, size, cap, registryAccess);
+        });
+    }
+
+    private static void renderFaceIcon(@NotNull GuiGraphics guiGraphics,
+                                       int centerX, int centerY, int index,
+                                       int size, FaceCapability cap, RegistryAccess registryAccess) {
+        int faceIconSize = size / 4;
+        var face = FaceCapability.unpackFace(registryAccess, cap.getFace(index));
+
+        TextureAtlasSprite sprite = FacesTextureLoader.getInstance().get(face.imagePath());
+
+        SpriteContents contents = sprite.contents();
+        int spriteWidth = contents.width();
+        int spriteHeight = contents.height();
+        float maxSpriteSize = Math.max(spriteWidth, spriteHeight);
+        float actualWidth = spriteWidth / maxSpriteSize * faceIconSize;
+        float actualHeight = spriteHeight / maxSpriteSize * faceIconSize;
+
+        innerBlit(sprite.atlasLocation(), guiGraphics.pose(),
+                centerX - actualWidth / 2, centerX + actualWidth / 2,
+                centerY - actualHeight / 2, centerY + actualHeight / 2,
+                sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(),
+                0xFF_FF_FF_FF);
+    }
+
+    private static int getArgb(int select, int clicked, int curr) {
+        int white = 0xFF_FF_FF_FF;
+        int red = 0xFF_FF_00_00;
+        int green = 0xFF_00_FF_00;
+
+        if (select == curr)
+            return red;
+
+        return clicked == curr ? green : white;
     }
 
     private static void innerBlit(
             ResourceLocation texture, PoseStack poseStack,
-            int x1, int x2, int y1, int y2,
+            float x1, float x2, float y1, float y2,
             float u0, float u1, float v0, float v1,
             int argb
     ) {
