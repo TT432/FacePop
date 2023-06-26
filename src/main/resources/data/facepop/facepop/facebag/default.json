@@ -1,8 +1,37 @@
 {
+  "default_unlock": true,
   "faces": [
     {
       "id": "facepop:awesome",
       "image_path": "facepop:faces/awesome"
+    },
+    {
+      "id": "facepop:exclamation_mark",
+      "image_path": "facepop:faces/exclamation_mark"
+    },
+    {
+      "id": "facepop:happy1",
+      "image_path": "facepop:faces/happy1"
+    },
+    {
+      "id": "facepop:happy2",
+      "image_path": "facepop:faces/happy2"
+    },
+    {
+      "id": "facepop:question_mark",
+      "image_path": "facepop:faces/question_mark"
+    },
+    {
+      "id": "facepop:sleeping",
+      "image_path": "facepop:faces/sleeping"
+    },
+    {
+      "id": "facepop:surprise",
+      "image_path": "facepop:faces/sleeping"
+    },
+    {
+      "id": "facepop:unhappy",
+      "image_path": "facepop:faces/sleeping"
     }
   ]
 }

@@ -35,6 +35,12 @@ public class NetworkHandler {
                 BroadcastFacePacket::new,
                 ClientPacketHandler::handleBroadcastFacePacket,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
+        INSTANCE.registerMessage(id++, SyncCapabilityPacket.class,
+                SyncCapabilityPacket::encode,
+                SyncCapabilityPacket::new,
+                ClientPacketHandler::handleSyncCapabilityPacket,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     private NetworkHandler() {

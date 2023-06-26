@@ -5,7 +5,6 @@ import io.github.tt432.facepop.net.NetworkHandler;
 import io.github.tt432.facepop.net.SelectFacePacket;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -46,15 +45,11 @@ public class FacepopKeys {
             mc.setScreen(new FaceSettingScreen());
         }
 
-        if (!faceKeyDown
-                && mc.screen instanceof FaceSelectorScreen fss) {
+        if (!faceKeyDown && mc.screen instanceof FaceSelectorScreen fss) {
             int select = fss.getSelect();
 
-            mc.player.sendSystemMessage(Component.literal(String.valueOf(select)));
-
-            if (select == 1) {
-                // TODO 临时测试
-                NetworkHandler.INSTANCE.sendToServer(new SelectFacePacket("facepop:default", "facepop:awesome"));
+            if (select > 0 && select < 6) {
+                NetworkHandler.INSTANCE.sendToServer(new SelectFacePacket(select));
             }
 
             mc.setScreen(null);

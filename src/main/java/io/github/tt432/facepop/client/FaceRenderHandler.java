@@ -6,6 +6,7 @@ import io.github.tt432.facepop.data.Face;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,17 +43,22 @@ public class FaceRenderHandler {
 
             poseStack.pushPose();
 
-            poseStack.translate(0, player.getBbHeight() + face.offsetY() , 0);
+            poseStack.translate(0, player.getBbHeight() + face.offsetY(), 0);
             poseStack.mulPose(new Quaternionf().rotationZYX(
                     0,
                     (float) -Math.toRadians(player.getViewYRot(event.getPartialTick())),
                     (float) Math.toRadians(player.getViewXRot(event.getPartialTick()))));
-            poseStack.translate(face.offsetX() -0.3, 0, 0);
+            poseStack.translate(face.offsetX() - 0.3, 0, 0);
 
             VertexConsumer buffer = event.getMultiBufferSource().getBuffer(RenderType.entityCutout(sprite.atlasLocation()));
 
-            var x1 = -1;
-            var y1 = 1;
+            SpriteContents contents = sprite.contents();
+            int width = contents.width();
+            int height = contents.height();
+            float max = Math.max(width, height);
+
+            var x1 = -width / max;
+            var y1 = height / max;
             var x2 = 0;
             var y2 = 0;
 

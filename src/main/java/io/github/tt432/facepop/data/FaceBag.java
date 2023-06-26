@@ -9,9 +9,13 @@ import java.util.List;
  * @author TT432
  */
 public record FaceBag(
-        List<Face> faces
+        List<Face> faces,
+        boolean defaultUnlock,
+        String lockMsgLangKey
 ) {
     public static final Codec<FaceBag> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Face.CODEC.listOf().fieldOf("faces").forGetter(FaceBag::faces)
+            Face.CODEC.listOf().fieldOf("faces").forGetter(FaceBag::faces),
+            Codec.BOOL.optionalFieldOf("default_unlock", false).forGetter(FaceBag::defaultUnlock),
+            Codec.STRING.optionalFieldOf("lock_message", "facebag.lock").forGetter(FaceBag::lockMsgLangKey)
     ).apply(instance, FaceBag::new));
 }

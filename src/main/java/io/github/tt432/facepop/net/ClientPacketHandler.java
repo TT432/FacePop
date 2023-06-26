@@ -1,12 +1,10 @@
 package io.github.tt432.facepop.net;
 
 import io.github.tt432.facepop.client.FaceRenderHandler;
+import io.github.tt432.facepop.common.capability.FaceCapability;
 import io.github.tt432.facepop.data.Face;
-import io.github.tt432.facepop.data.FaceBag;
-import io.github.tt432.facepop.data.FaceBagManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
@@ -23,28 +21,24 @@ public class ClientPacketHandler {
             Minecraft mc = Minecraft.getInstance();
             RegistryAccess registryAccess = mc.level.registryAccess();
 
-            registryAccess.registry(FaceBagManager.FACE_BAG_KEY).ifPresent(registry -> {
-                FaceBag faceBag = registry.get(new ResourceLocation(msg.faceBag));
+            Face face = FaceCapability.unpackFace(registryAccess, msg.select);
 
-                if (faceBag != null) {
-                    Face targetFace = null;
+            if (face != null) {
+                Entity entity = mc.level.getEntity(msg.entityId);
 
-                    for (Face face : faceBag.faces()) {
-                        if (face.id().toString().equals(msg.select)) {
-                            targetFace = face;
-                            break;
-                        }
-                    }
-
-                    if (targetFace != null) {
-                        Entity entity = mc.level.getEntity(msg.entityId);
-
-                        if (entity instanceof Player) {
-                            FaceRenderHandler.putRenderData(msg.entityId, targetFace);
-                        }
-                    }
+                if (entity instanceof Player) {
+                    FaceRenderHandler.putRenderData(msg.entityId, face);
                 }
-            });
+            }
+
+            context.setPacketHandled(true);
+        });
+    }
+
+    public static void handleSyncCapabilityPacket(SyncCapabilityPacket msg, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        context.enqueueWork(() -> {
+            Minecraft.getInstance().player.getCapability(FaceCapability.CAPABILITY).ifPresent(cap -> cap.deserializeNBT(msg.tag));
 
             context.setPacketHandled(true);
         });

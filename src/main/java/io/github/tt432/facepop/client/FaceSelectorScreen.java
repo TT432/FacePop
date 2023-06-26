@@ -30,16 +30,17 @@ public class FaceSelectorScreen extends Screen {
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float ticks) {
         var centerX = width / 2;
         var centerY = height / 2;
-        var distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
-        var angle = Math.atan2(mouseY - centerY, mouseX - centerX);
 
-        selectFace(distance, angle);
+        select = selectFace(mouseX, mouseY, centerX, centerY, 100);
+
+        renderWheel(guiGraphics, centerX, centerY, 100, select);
+    }
+
+    public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select) {
+        int half = size / 2;
 
         int white = 0xFF_FF_FF_FF;
         int red = 0xFF_FF_00_00;
-
-        int size = 100;
-        int half = size / 2;
 
         innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX, centerX + size, centerY - half, centerY + half,
@@ -59,7 +60,7 @@ public class FaceSelectorScreen extends Screen {
                 select == 5 ? red : white);
     }
 
-    void innerBlit(
+    private static void innerBlit(
             ResourceLocation texture, PoseStack poseStack,
             int x1, int x2, int y1, int y2,
             float u0, float u1, float v0, float v1,
@@ -79,25 +80,28 @@ public class FaceSelectorScreen extends Screen {
         RenderSystem.disableBlend();
     }
 
-    private void selectFace(double distance, double angle) {
+    public static int selectFace(int mouseX, int mouseY, int centerX, int centerY, int size) {
+        var distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
+        var angle = Math.atan2(mouseY - centerY, mouseX - centerX);
+
         if (angle < 0)
             angle = 2 * Math.PI + angle;
 
-        if (distance < 50) {
-            select = 1;
-        } else if (distance < 100) {
+        if (distance < size / 2D) {
+            return 1;
+        } else if (distance < size) {
             if (angle > Math.PI * (7D / 4D) || angle < Math.PI / 4) {
-                select = 2;
+                return 2;
             } else if (angle > Math.PI / 4 && angle < Math.PI * (3D / 4D)) {
-                select = 3;
+                return 3;
             } else if (angle > Math.PI * (3D / 4D) && angle < Math.PI * (5D / 4D)) {
-                select = 4;
+                return 4;
             } else if (angle > Math.PI * (5D / 4D) && angle < Math.PI * (7D / 4D)) {
-                select = 5;
+                return 5;
             }
-        } else {
-            select = 0;
         }
+
+        return 0;
     }
 
     public int getSelect() {
