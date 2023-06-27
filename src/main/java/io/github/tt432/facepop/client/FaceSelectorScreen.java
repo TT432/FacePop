@@ -44,19 +44,19 @@ public class FaceSelectorScreen extends Screen {
     public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select, int clicked) {
         int half = size / 2;
 
-        innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
+        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX, centerX + size, centerY - half, centerY + half,
                 0.5F, 1F, 0F, 0.5F,
                 getArgb(select, clicked, 2));
-        innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
+        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX - half, centerX + half, centerY, centerY + size,
                 0F, 0.5F, 0.5F, 1F,
                 getArgb(select, clicked, 3));
-        innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
+        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX - size, centerX, centerY - half, centerY + half,
                 0.5F, 1F, 0.5F, 1F,
                 getArgb(select, clicked, 4));
-        innerBlit(ELEMENT_LOCATION, guiGraphics.pose(),
+        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
                 centerX - half, centerX + half, centerY - size, centerY,
                 0F, 0.5F, 0F, 0.5F,
                 getArgb(select, clicked, 5));
@@ -89,7 +89,7 @@ public class FaceSelectorScreen extends Screen {
         float actualWidth = spriteWidth / maxSpriteSize * faceIconSize;
         float actualHeight = spriteHeight / maxSpriteSize * faceIconSize;
 
-        innerBlit(sprite.atlasLocation(), guiGraphics.pose(),
+        renderTexture(sprite.atlasLocation(), guiGraphics.pose(),
                 centerX - actualWidth / 2, centerX + actualWidth / 2,
                 centerY - actualHeight / 2, centerY + actualHeight / 2,
                 sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(),
@@ -107,7 +107,7 @@ public class FaceSelectorScreen extends Screen {
         return clicked == curr ? green : white;
     }
 
-    private static void innerBlit(
+    public static void renderTexture(
             ResourceLocation texture, PoseStack poseStack,
             float x1, float x2, float y1, float y2,
             float u0, float u1, float v0, float v1,
