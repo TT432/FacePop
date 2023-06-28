@@ -1,6 +1,7 @@
 {
   "default_unlock": true,
   "icon": "facepop:faces/awesome",
+  "id": "facepop:default",
   "faces": [
     {
       "id": "facepop:awesome",
@@ -28,11 +29,11 @@
     },
     {
       "id": "facepop:surprise",
-      "image_path": "facepop:faces/sleeping"
+      "image_path": "facepop:faces/surprise"
     },
     {
       "id": "facepop:unhappy",
-      "image_path": "facepop:faces/sleeping"
+      "image_path": "facepop:faces/unhappy"
     }
   ]
 }

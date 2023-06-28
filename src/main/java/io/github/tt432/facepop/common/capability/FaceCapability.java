@@ -47,6 +47,22 @@ public class FaceCapability implements INBTSerializable<CompoundTag> {
         return unlockedFaceBag.contains(faceBag);
     }
 
+    public void trySetPackedFace(int index, RegistryAccess access, String packedFace) {
+        String[] faceBagAndFace = packedFace.split("#");
+
+        if (access.registry(FaceBagManager.FACE_BAG_KEY)
+                .map(registry -> registry.get(new ResourceLocation(faceBagAndFace[0])))
+                .map(FaceBag::defaultUnlock)
+                .orElse(false)
+                || canUse(faceBagAndFace[0])) {
+
+            if (index < 1 || index > 5)
+                return;
+
+            wheelFaces.set(index - 1, packedFace);
+        }
+    }
+
     public static String packFace(ResourceLocation faceBag, ResourceLocation face) {
         return faceBag.toString() + "#" + face.toString();
     }
@@ -83,13 +99,6 @@ public class FaceCapability implements INBTSerializable<CompoundTag> {
             return "facepop:default#facepop:awesome";
 
         return wheelFaces.get(index - 1);
-    }
-
-    public void setFace(int index, ResourceLocation faceBag, ResourceLocation face) {
-        if (index < 1 || index > 5)
-            return;
-
-        wheelFaces.set(index - 1, packFace(faceBag, face));
     }
 
     @Override

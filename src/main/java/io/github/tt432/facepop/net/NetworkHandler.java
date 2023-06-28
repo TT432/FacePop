@@ -41,6 +41,12 @@ public class NetworkHandler {
                 SyncCapabilityPacket::new,
                 ClientPacketHandler::handleSyncCapabilityPacket,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
+        INSTANCE.registerMessage(id++, SetFacePacket.class,
+                SetFacePacket::encode,
+                SetFacePacket::new,
+                SetFacePacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     private NetworkHandler() {
