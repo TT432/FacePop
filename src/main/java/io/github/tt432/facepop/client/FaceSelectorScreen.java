@@ -20,7 +20,12 @@ import org.joml.Matrix4f;
  * @author TT432
  */
 public class FaceSelectorScreen extends Screen {
-    public static final ResourceLocation ELEMENT_LOCATION = new ResourceLocation(Facepop.MOD_ID, "textures/gui/ui.png");
+    public static final ResourceLocation BACKGROUND = new ResourceLocation(Facepop.MOD_ID, "textures/gui/6.png");
+    public static final ResourceLocation LEFT = new ResourceLocation(Facepop.MOD_ID, "textures/gui/1.png");
+    public static final ResourceLocation RIGHT = new ResourceLocation(Facepop.MOD_ID, "textures/gui/2.png");
+    public static final ResourceLocation UP = new ResourceLocation(Facepop.MOD_ID, "textures/gui/4.png");
+    public static final ResourceLocation BOTTOM = new ResourceLocation(Facepop.MOD_ID, "textures/gui/3.png");
+    public static final ResourceLocation CENTER = new ResourceLocation(Facepop.MOD_ID, "textures/gui/5.png");
 
     /**
      * 1 .. 5 ，1 是 中心，右是 2，下是 3，以此类推
@@ -36,48 +41,130 @@ public class FaceSelectorScreen extends Screen {
         var centerX = width / 2;
         var centerY = height / 2;
 
-        select = selectFace(mouseX, mouseY, centerX, centerY, 100);
+        int size = 150;
+        select = selectFace(mouseX, mouseY, centerX, centerY, size);
 
-        renderWheel(guiGraphics, centerX, centerY, 100, select, 0);
+        renderWheel(guiGraphics, centerX, centerY, size, select, 0);
     }
 
     public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select, int clicked) {
         int half = size / 2;
 
-        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
-                centerX, centerX + size, centerY - half, centerY + half,
-                0.5F, 1F, 0F, 0.5F,
-                getArgb(select, clicked, 2));
-        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
-                centerX - half, centerX + half, centerY, centerY + size,
-                0F, 0.5F, 0.5F, 1F,
-                getArgb(select, clicked, 3));
-        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
-                centerX - size, centerX, centerY - half, centerY + half,
-                0.5F, 1F, 0.5F, 1F,
-                getArgb(select, clicked, 4));
-        renderTexture(ELEMENT_LOCATION, guiGraphics.pose(),
-                centerX - half, centerX + half, centerY - size, centerY,
-                0F, 0.5F, 0F, 0.5F,
-                getArgb(select, clicked, 5));
+        int bgw = 126;
+        int bgh = 129;
+
+        float offset = (126F / 129F * size) - size;
+
+        int color = 0xFF_FF_FF_FF;
+
+        int left = centerX - half;
+        int right = centerX + half;
+        int up = centerY - half;
+        float bottom = centerY + offset + half;
+
+        renderTexture(BACKGROUND, guiGraphics.pose(),
+                left, right, up, bottom,
+                0, 1, 0, 1,
+                color);
+
+        if (select == 1 || clicked == 1) {
+            int aw = 46;
+            int ah = 46;
+
+            float maxS = Math.max(aw, ah);
+            float s = maxS / bgw;
+
+            var asx = s * aw / maxS * size;
+            var asy = s * ah / maxS * size;
+
+            renderTexture(CENTER, guiGraphics.pose(),
+                    centerX - asx / 2, centerX + asx / 2, centerY - asy / 2, centerY + asy / 2,
+                    0, 1, 0, 1,
+                    color);
+        }
+
+        if (select == 2 || clicked == 2) {
+            int aw = 46;
+            int ah = 78;
+
+            float maxS = Math.max(aw, ah);
+            float s = maxS / bgw;
+
+            var asx = s * aw / maxS * size;
+            var asy = s * ah / maxS * size;
+
+            renderTexture(RIGHT, guiGraphics.pose(),
+                    right - asx, right, centerY - asy / 2, centerY + asy / 2,
+                    0, 1, 0, 1,
+                    color);
+        }
+
+        if (select == 3 || clicked == 3) {
+            int aw = 78;
+            int ah = 47;
+
+            float maxS = Math.max(aw, ah);
+            float s = maxS / bgw;
+
+            var asx = s * aw / maxS * size;
+            var asy = s * ah / maxS * size;
+
+            renderTexture(BOTTOM, guiGraphics.pose(),
+                    centerX - asx / 2, centerX + asx / 2, bottom - asy, bottom,
+                    0, 1, 0, 1,
+                    color);
+        }
+
+        if (select == 4 || clicked == 4) {
+            int aw = 46;
+            int ah = 78;
+
+            float maxS = Math.max(aw, ah);
+            float s = maxS / bgw;
+
+            var asx = s * aw / maxS * size;
+            var asy = s * ah / maxS * size;
+
+            renderTexture(LEFT, guiGraphics.pose(),
+                    left, left + asx, centerY - asy / 2, centerY + asy / 2,
+                    0, 1, 0, 1,
+                    color);
+        }
+
+        if (select == 5 || clicked == 5) {
+            int aw = 78;
+            int ah = 50;
+
+            float maxS = Math.max(aw, ah);
+            float s = maxS / bgw;
+
+            var asx = s * aw / maxS * size;
+            var asy = s * ah / maxS * size;
+
+            renderTexture(UP, guiGraphics.pose(),
+                    centerX - asx / 2, centerX + asx / 2, up, up + asy,
+                    0, 1, 0, 1,
+                    color);
+        }
 
 
         Minecraft mc = Minecraft.getInstance();
+        float centerSize = (46F / 2) / 126F * size;
         mc.player.getCapability(FaceCapability.CAPABILITY).ifPresent(cap -> {
             RegistryAccess registryAccess = mc.level.registryAccess();
 
             renderFaceIcon(guiGraphics, centerX, centerY, 1, size, cap, registryAccess);
-            renderFaceIcon(guiGraphics, centerX + size / 2, centerY, 2, size, cap, registryAccess);
-            renderFaceIcon(guiGraphics, centerX, centerY + size / 2, 3, size, cap, registryAccess);
-            renderFaceIcon(guiGraphics, centerX - size / 2, centerY, 4, size, cap, registryAccess);
-            renderFaceIcon(guiGraphics, centerX, centerY - size / 2, 5, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX + (centerSize + (size / 2.5F)) / 2, centerY, 2, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX, centerY + (centerSize + (size / 2.5F)) / 2, 3, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX - (centerSize + (size / 2.5F)) / 2, centerY, 4, size, cap, registryAccess);
+            renderFaceIcon(guiGraphics, centerX, centerY - (centerSize + (size / 2.5F)) / 2, 5, size, cap, registryAccess);
         });
     }
 
     private static void renderFaceIcon(@NotNull GuiGraphics guiGraphics,
-                                       int centerX, int centerY, int index,
+                                       float centerX, float centerY, int index,
                                        int size, FaceCapability cap, RegistryAccess registryAccess) {
-        int faceIconSize = size / 4;
+        int faceIconSize = size / 5;
         var face = FaceCapability.unpackFace(registryAccess, cap.getFace(index));
 
         TextureAtlasSprite sprite = FacesTextureLoader.getInstance().get(face.imagePath());
@@ -94,17 +181,6 @@ public class FaceSelectorScreen extends Screen {
                 centerY - actualHeight / 2, centerY + actualHeight / 2,
                 sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(),
                 0xFF_FF_FF_FF);
-    }
-
-    private static int getArgb(int select, int clicked, int curr) {
-        int white = 0xFF_FF_FF_FF;
-        int red = 0xFF_FF_00_00;
-        int green = 0xFF_00_FF_00;
-
-        if (select == curr)
-            return red;
-
-        return clicked == curr ? green : white;
     }
 
     public static void renderTexture(
@@ -134,9 +210,11 @@ public class FaceSelectorScreen extends Screen {
         if (angle < 0)
             angle = 2 * Math.PI + angle;
 
-        if (distance < size / 2D) {
+        float centerSize = (46F / 2) / 126F * size;
+
+        if (distance < centerSize) {
             return 1;
-        } else if (distance < size) {
+        } else if (distance < size / 2F) {
             if (angle > Math.PI * (7D / 4D) || angle < Math.PI / 4) {
                 return 2;
             } else if (angle > Math.PI / 4 && angle < Math.PI * (3D / 4D)) {

@@ -1,0 +1,67 @@
+{
+  "default_unlock": true,
+  "icon": "facepop:faces/ahh",
+  "id": "facepop:default_ex",
+  "faces": [
+    {
+      "id": "facepop:ahh",
+      "image_path": "facepop:faces/ahh"
+    },
+    {
+      "id": "facepop:anger",
+      "image_path": "facepop:faces/anger"
+    },
+    {
+      "id": "facepop:bitter_laugh",
+      "image_path": "facepop:faces/bitter_laugh"
+    },
+    {
+      "id": "facepop:bottom",
+      "image_path": "facepop:faces/bottom"
+    },
+    {
+      "id": "facepop:bye",
+      "image_path": "facepop:faces/bye"
+    },
+    {
+      "id": "facepop:doubt",
+      "image_path": "facepop:faces/doubt"
+    },
+    {
+      "id": "facepop:empty",
+      "image_path": "facepop:faces/empty"
+    },
+    {
+      "id": "facepop:get_idea",
+      "image_path": "facepop:faces/get_idea"
+    },
+    {
+      "id": "facepop:giddiness",
+      "image_path": "facepop:faces/giddiness"
+    },
+    {
+      "id": "facepop:left",
+      "image_path": "facepop:faces/left"
+    },
+    {
+      "id": "facepop:me",
+      "image_path": "facepop:faces/me"
+    },
+    {
+      "id": "facepop:point_out",
+      "image_path": "facepop:faces/point_out"
+    },
+    {
+      "id": "facepop:right",
+      "image_path": "facepop:faces/right"
+    },
+    {
+      "id": "facepop:silence",
+      "image_path": "facepop:faces/silence"
+    },
+    {
+      "id": "facepop:up",
+      "image_path": "facepop:faces/up"
+    }
+  ]
+}

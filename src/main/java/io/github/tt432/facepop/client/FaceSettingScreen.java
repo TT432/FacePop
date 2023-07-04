@@ -58,44 +58,7 @@ public class FaceSettingScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, ticks);
 
         if (!init) {
-            init = true;
-
-            int left = 180;
-            int top = height - 30 - 30;
-
-            int xSize = 50;
-            int ySize = 20;
-
-            // todo translation component
-            returnButton = Button.builder(Component.literal("return"), button -> {
-                openedSubPlane = false;
-                selectFaceBag = -1;
-                subPlanePage = 0;
-            }).bounds(left, top, xSize, ySize).build();
-
-            leftPageButton = Button.builder(Component.literal("<"), button -> {
-                if (openedSubPlane) {
-                    if (subPlanePage > 0)
-                        subPlanePage--;
-                } else {
-                    if (page > 0)
-                        page--;
-                }
-            }).bounds(left + xSize + 10, top, ySize, ySize).build();
-
-            rightPageButton = Button.builder(Component.literal(">"), button -> {
-                if (openedSubPlane) {
-                    if (subPlanePage > faceList.size() / 12)
-                        subPlanePage++;
-                } else {
-                    if (page > faceBagList.size() / 12)
-                        page++;
-                }
-            }).bounds(left + xSize + ySize + 20, top, ySize, ySize).build();
-
-            addRenderableWidget(returnButton);
-            addRenderableWidget(leftPageButton);
-            addRenderableWidget(rightPageButton);
+            initSettingScreen();
         }
 
         int minX = 30;
@@ -108,7 +71,7 @@ public class FaceSettingScreen extends Screen {
 
         var centerX = 100;
         var centerY = height / 2;
-        int size = 60;
+        int size = 80;
 
         hoverWheel = FaceSelectorScreen.selectFace(mouseX, mouseY, centerX, centerY, size);
         FaceSelectorScreen.renderWheel(guiGraphics, centerX, centerY, size, hoverWheel, selectWheel);
@@ -132,6 +95,47 @@ public class FaceSettingScreen extends Screen {
         } else {
             renderFaceBagButtons(guiGraphics, mouseX, mouseY);
         }
+    }
+
+    private void initSettingScreen() {
+        init = true;
+
+        int left = 180;
+        int top = height - 30 - 30;
+
+        int xSize = 50;
+        int ySize = 20;
+
+        // todo translation component
+        returnButton = Button.builder(Component.literal("return"), button -> {
+            openedSubPlane = false;
+            selectFaceBag = -1;
+            subPlanePage = 0;
+        }).bounds(left, top, xSize, ySize).build();
+
+        leftPageButton = Button.builder(Component.literal("<"), button -> {
+            if (openedSubPlane) {
+                if (subPlanePage > 0)
+                    subPlanePage--;
+            } else {
+                if (page > 0)
+                    page--;
+            }
+        }).bounds(left + xSize + 10, top, ySize, ySize).build();
+
+        rightPageButton = Button.builder(Component.literal(">"), button -> {
+            if (openedSubPlane) {
+                if (subPlanePage > faceList.size() / 12)
+                    subPlanePage++;
+            } else {
+                if (page > faceBagList.size() / 12)
+                    page++;
+            }
+        }).bounds(left + xSize + ySize + 20, top, ySize, ySize).build();
+
+        addRenderableWidget(returnButton);
+        addRenderableWidget(leftPageButton);
+        addRenderableWidget(rightPageButton);
     }
 
     @Override
