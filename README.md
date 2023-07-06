@@ -6,6 +6,8 @@ FacePop 是一款基于 Minecraft Forge 开发的 Mod。
 
 ![ingame1.png](ingame1.png)
 
+按 `G` 键打开本 mod 主界面，按 `Ctrl + G` 打开表情设置界面。
+
 FacePop 如很多 Mod 一样，提供了数据包进行自定义，并拥有最基本的管理系统。
 
 表情管理系统中，基本单位为**表情包**（facebag）。
