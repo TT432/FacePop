@@ -167,6 +167,9 @@ public class FaceSettingScreen extends Screen {
         int left = 180;
         int top = 40;
 
+        // TODO lang key
+        guiGraphics.drawString(Minecraft.getInstance().font, "Face Bag",180 ,top, 0xFF_FF_FF_FF);
+
         int faceBagListStart = page * 12;
         int faceBagListEnd = Math.min((page + 1) * 12, faceBagList.size());
 
@@ -222,6 +225,9 @@ public class FaceSettingScreen extends Screen {
     private void renderSubPlane(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         int left = 180;
         int top = 40;
+
+        // TODO lang key
+        guiGraphics.drawString(Minecraft.getInstance().font, "Face",180 ,top, 0xFF_FF_FF_FF);
 
         int faceBagListStart = page * 12;
         int faceBagListEnd = Math.min((page + 1) * 12, faceList.size());

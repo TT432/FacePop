@@ -47,7 +47,7 @@ public class FaceRenderHandler {
             poseStack.mulPose(new Quaternionf().rotationZYX(
                     0,
                     (float) -Math.toRadians(player.getViewYRot(event.getPartialTick())),
-                    (float) Math.toRadians(player.getViewXRot(event.getPartialTick()))));
+                    0));
             poseStack.translate(face.offsetX() - 0.3, 0, 0);
 
             VertexConsumer buffer = event.getMultiBufferSource().getBuffer(RenderType.entityCutout(sprite.atlasLocation()));
