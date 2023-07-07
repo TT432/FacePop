@@ -24,6 +24,10 @@ FacePop 如很多 Mod 一样，提供了数据包进行自定义，并拥有最�
 
 ## 数据包格式说明
 
+facebag 放置位于 `data/[modid]/facepop/facebag/` 文件夹下。
+
+Face / FaceBag 的纹理统一放置于 `assets/[modid]/textures/faces/` 文件夹下。
+
 ### Face
 
 ```json5
