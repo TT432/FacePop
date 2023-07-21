@@ -14,6 +14,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 /**
@@ -36,6 +37,12 @@ public class FaceSelectorScreen extends Screen {
         super(Component.empty());
     }
 
+    ImageElement centerElement = new ImageElement(46, 46, CENTER);
+    ImageElement rightElement = new ImageElement(46, 78, RIGHT);
+    ImageElement bottomElement = new ImageElement(78, 47, BOTTOM);
+    ImageElement leftElement = new ImageElement(46, 78, LEFT);
+    ImageElement upElement = new ImageElement(78, 46, UP);
+
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float ticks) {
         var centerX = width / 2;
@@ -44,14 +51,7 @@ public class FaceSelectorScreen extends Screen {
         int size = 150;
         select = selectFace(mouseX, mouseY, centerX, centerY, size);
 
-        renderWheel(guiGraphics, centerX, centerY, size, select, 0);
-    }
-
-    public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select, int clicked) {
         int half = size / 2;
-
-        int bgw = 126;
-        int bgh = 129;
 
         float offset = (126F / 129F * size) - size;
 
@@ -67,86 +67,155 @@ public class FaceSelectorScreen extends Screen {
                 0, 1, 0, 1,
                 color);
 
-        if (select == 1 || clicked == 1) {
-            int aw = 46;
-            int ah = 46;
+        renderWheel(guiGraphics, centerX, centerY, size, select, 126,
+                centerElement, rightElement, bottomElement, leftElement, upElement);
+    }
 
-            float maxS = Math.max(aw, ah);
-            float s = maxS / bgw;
+    public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select,
+                                   int bgWidth,
+                                   ImageElement centerElement,ImageElement rightElement, ImageElement bottomElement,
+                                   ImageElement leftElement, ImageElement upElement) {
+        renderWheel(guiGraphics, centerX, centerY, size, 0, select, bgWidth,
+                centerElement, rightElement, bottomElement, leftElement, upElement,
+                null,null,null,null,null);
+    }
 
-            var asx = s * aw / maxS * size;
-            var asy = s * ah / maxS * size;
+    public static void renderWheel(@NotNull GuiGraphics guiGraphics, float centerX, float centerY, int size,
+                                   int click, int select,
+                                   int bgWidth,
+                                   ImageElement centerElement, ImageElement rightElement, ImageElement bottomElement,
+                                   ImageElement leftElement, ImageElement upElement,
+                                   @Nullable ImageElement clickCenterElement,  @Nullable ImageElement clickRightElement,
+                                   @Nullable ImageElement clickBottomElement,  @Nullable ImageElement clickLeftElement,
+                                   @Nullable ImageElement clickUpElement) {
+        int half = size / 2;
 
-            renderTexture(CENTER, guiGraphics.pose(),
+        int color = 0xFF_FF_FF_FF;
+
+        var left = centerX - half;
+        var right = centerX + half;
+        var up = centerY - half;
+        var bottom = centerY + half;
+
+        if (select == 1) {
+            float maxS = Math.max(centerElement.w(), centerElement.h());
+            float s = maxS / bgWidth;
+
+            var asx = s * centerElement.w() / maxS * size;
+            var asy = s * centerElement.h() / maxS * size;
+
+            renderTexture(centerElement.rl(), guiGraphics.pose(),
+                    centerX - asx / 2, centerX + asx / 2, centerY - asy / 2, centerY + asy / 2,
+                    0, 1, 0, 1,
+                    color);
+        } else if (click == 1 && clickCenterElement != null) {
+            float maxS = Math.max(clickCenterElement.w(), clickCenterElement.h());
+            float s = maxS / bgWidth;
+
+            var asx = s * clickCenterElement.w() / maxS * size;
+            var asy = s * clickCenterElement.h() / maxS * size;
+
+            renderTexture(clickCenterElement.rl(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
         }
 
-        if (select == 2 || clicked == 2) {
-            int aw = 46;
-            int ah = 78;
+        if (select == 2) {
+            float maxS = Math.max(rightElement.w(), rightElement.h());
+            float s = maxS / bgWidth;
 
-            float maxS = Math.max(aw, ah);
-            float s = maxS / bgw;
+            var asx = s * rightElement.w() / maxS * size;
+            var asy = s * rightElement.h() / maxS * size;
 
-            var asx = s * aw / maxS * size;
-            var asy = s * ah / maxS * size;
+            renderTexture(rightElement.rl(), guiGraphics.pose(),
+                    right - asx, right, centerY - asy / 2, centerY + asy / 2,
+                    0, 1, 0, 1,
+                    color);
+        } else if (click == 2 && clickRightElement != null) {
+            float maxS = Math.max(clickRightElement.w(), clickRightElement.h());
+            float s = maxS / bgWidth;
 
-            renderTexture(RIGHT, guiGraphics.pose(),
+            var asx = s * clickRightElement.w() / maxS * size;
+            var asy = s * clickRightElement.h() / maxS * size;
+
+            renderTexture(clickRightElement.rl(), guiGraphics.pose(),
                     right - asx, right, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
         }
 
-        if (select == 3 || clicked == 3) {
-            int aw = 78;
-            int ah = 47;
+        if (select == 3) {
+            float maxS = Math.max(bottomElement.w(), bottomElement.h());
+            float s = maxS / bgWidth;
 
-            float maxS = Math.max(aw, ah);
-            float s = maxS / bgw;
+            var asx = s * bottomElement.w() / maxS * size;
+            var asy = s * bottomElement.h() / maxS * size;
 
-            var asx = s * aw / maxS * size;
-            var asy = s * ah / maxS * size;
+            renderTexture(bottomElement.rl(), guiGraphics.pose(),
+                    centerX - asx / 2, centerX + asx / 2, bottom - asy, bottom,
+                    0, 1, 0, 1,
+                    color);
+        } else if (click == 3 && clickBottomElement != null) {
+            float maxS = Math.max(clickBottomElement.w(), clickBottomElement.h());
+            float s = maxS / bgWidth;
 
-            renderTexture(BOTTOM, guiGraphics.pose(),
+            var asx = s * clickBottomElement.w() / maxS * size;
+            var asy = s * clickBottomElement.h() / maxS * size;
+
+            renderTexture(clickBottomElement.rl(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, bottom - asy, bottom,
                     0, 1, 0, 1,
                     color);
         }
 
-        if (select == 4 || clicked == 4) {
-            int aw = 46;
-            int ah = 78;
+        if (select == 4) {
+            float maxS = Math.max(leftElement.w(), leftElement.h());
+            float s = maxS / bgWidth;
 
-            float maxS = Math.max(aw, ah);
-            float s = maxS / bgw;
+            var asx = s * leftElement.w() / maxS * size;
+            var asy = s * leftElement.h() / maxS * size;
 
-            var asx = s * aw / maxS * size;
-            var asy = s * ah / maxS * size;
+            renderTexture(leftElement.rl(), guiGraphics.pose(),
+                    left, left + asx, centerY - asy / 2, centerY + asy / 2,
+                    0, 1, 0, 1,
+                    color);
+        } else if (click == 4 && clickLeftElement != null) {
+            float maxS = Math.max(clickLeftElement.w(), clickLeftElement.h());
+            float s = maxS / bgWidth;
 
-            renderTexture(LEFT, guiGraphics.pose(),
+            var asx = s * clickLeftElement.w() / maxS * size;
+            var asy = s * clickLeftElement.h() / maxS * size;
+
+            renderTexture(clickLeftElement.rl(), guiGraphics.pose(),
                     left, left + asx, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
         }
 
-        if (select == 5 || clicked == 5) {
-            int aw = 78;
-            int ah = 50;
+        if (select == 5) {
+            float maxS = Math.max(upElement.w(), upElement.h());
+            float s = maxS / bgWidth;
 
-            float maxS = Math.max(aw, ah);
-            float s = maxS / bgw;
+            var asx = s * upElement.w() / maxS * size;
+            var asy = s * upElement.h() / maxS * size;
 
-            var asx = s * aw / maxS * size;
-            var asy = s * ah / maxS * size;
+            renderTexture(upElement.rl(), guiGraphics.pose(),
+                    centerX - asx / 2, centerX + asx / 2, up, up + asy,
+                    0, 1, 0, 1,
+                    color);
+        } else if (click == 5 && clickUpElement != null) {
+            float maxS = Math.max(clickUpElement.w(), clickUpElement.h());
+            float s = maxS / bgWidth;
 
-            renderTexture(UP, guiGraphics.pose(),
+            var asx = s * clickUpElement.w() / maxS * size;
+            var asy = s * clickUpElement.h() / maxS * size;
+
+            renderTexture(clickUpElement.rl(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, up, up + asy,
                     0, 1, 0, 1,
                     color);
         }
-
 
         Minecraft mc = Minecraft.getInstance();
         float centerSize = (46F / 2) / 126F * size;
@@ -203,7 +272,7 @@ public class FaceSelectorScreen extends Screen {
         RenderSystem.disableBlend();
     }
 
-    public static int selectFace(int mouseX, int mouseY, int centerX, int centerY, int size) {
+    public static int selectFace(int mouseX, int mouseY, float centerX, float centerY, float size) {
         var distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
         var angle = Math.atan2(mouseY - centerY, mouseX - centerX);
 
