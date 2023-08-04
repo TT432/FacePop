@@ -37,19 +37,25 @@ public class FaceSelectorScreen extends Screen {
         super(Component.empty());
     }
 
+    /* 选择器中心框 */
     ImageElement centerElement = new ImageElement(46, 46, CENTER);
+    /* 选择器靠右框 */
     ImageElement rightElement = new ImageElement(46, 78, RIGHT);
+    /* 选择器靠下框 */
     ImageElement bottomElement = new ImageElement(78, 47, BOTTOM);
+    /* 选择器靠左框 */
     ImageElement leftElement = new ImageElement(46, 78, LEFT);
+    /* 选择器靠上框 */
     ImageElement upElement = new ImageElement(78, 46, UP);
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float ticks) {
+        // 计算屏幕中心位置
         var centerX = width / 2;
         var centerY = height / 2;
 
         int size = 150;
-        select = selectFace(mouseX, mouseY, centerX, centerY, size);
+        this.select = selectFace(mouseX, mouseY, centerX, centerY, size);
 
         int half = size / 2;
 
@@ -62,31 +68,35 @@ public class FaceSelectorScreen extends Screen {
         int up = centerY - half;
         float bottom = centerY + offset + half;
 
+        // 绘制背景
         renderTexture(BACKGROUND, guiGraphics.pose(),
                 left, right, up, bottom,
                 0, 1, 0, 1,
                 color);
 
+        // 绘制选择轮
         renderWheel(guiGraphics, centerX, centerY, size, select, 126,
                 centerElement, rightElement, bottomElement, leftElement, upElement);
     }
 
+    /* 渲染表情选择轮（没有任何选中的情况） */
     public static void renderWheel(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, int size, int select,
                                    int bgWidth,
-                                   ImageElement centerElement,ImageElement rightElement, ImageElement bottomElement,
+                                   ImageElement centerElement, ImageElement rightElement, ImageElement bottomElement,
                                    ImageElement leftElement, ImageElement upElement) {
         renderWheel(guiGraphics, centerX, centerY, size, 0, select, bgWidth,
                 centerElement, rightElement, bottomElement, leftElement, upElement,
-                null,null,null,null,null);
+                null, null, null, null, null);
     }
 
+    /* 渲染表情选择轮（有选中的情况） */
     public static void renderWheel(@NotNull GuiGraphics guiGraphics, float centerX, float centerY, int size,
                                    int click, int select,
                                    int bgWidth,
                                    ImageElement centerElement, ImageElement rightElement, ImageElement bottomElement,
                                    ImageElement leftElement, ImageElement upElement,
-                                   @Nullable ImageElement clickCenterElement,  @Nullable ImageElement clickRightElement,
-                                   @Nullable ImageElement clickBottomElement,  @Nullable ImageElement clickLeftElement,
+                                   @Nullable ImageElement clickCenterElement, @Nullable ImageElement clickRightElement,
+                                   @Nullable ImageElement clickBottomElement, @Nullable ImageElement clickLeftElement,
                                    @Nullable ImageElement clickUpElement) {
         int half = size / 2;
 
@@ -104,7 +114,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * centerElement.w() / maxS * size;
             var asy = s * centerElement.h() / maxS * size;
 
-            renderTexture(centerElement.rl(), guiGraphics.pose(),
+            renderTexture(centerElement.resourceLocation(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
@@ -115,7 +125,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * clickCenterElement.w() / maxS * size;
             var asy = s * clickCenterElement.h() / maxS * size;
 
-            renderTexture(clickCenterElement.rl(), guiGraphics.pose(),
+            renderTexture(clickCenterElement.resourceLocation(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
@@ -128,7 +138,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * rightElement.w() / maxS * size;
             var asy = s * rightElement.h() / maxS * size;
 
-            renderTexture(rightElement.rl(), guiGraphics.pose(),
+            renderTexture(rightElement.resourceLocation(), guiGraphics.pose(),
                     right - asx, right, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
@@ -139,7 +149,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * clickRightElement.w() / maxS * size;
             var asy = s * clickRightElement.h() / maxS * size;
 
-            renderTexture(clickRightElement.rl(), guiGraphics.pose(),
+            renderTexture(clickRightElement.resourceLocation(), guiGraphics.pose(),
                     right - asx, right, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
@@ -152,7 +162,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * bottomElement.w() / maxS * size;
             var asy = s * bottomElement.h() / maxS * size;
 
-            renderTexture(bottomElement.rl(), guiGraphics.pose(),
+            renderTexture(bottomElement.resourceLocation(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, bottom - asy, bottom,
                     0, 1, 0, 1,
                     color);
@@ -163,7 +173,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * clickBottomElement.w() / maxS * size;
             var asy = s * clickBottomElement.h() / maxS * size;
 
-            renderTexture(clickBottomElement.rl(), guiGraphics.pose(),
+            renderTexture(clickBottomElement.resourceLocation(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, bottom - asy, bottom,
                     0, 1, 0, 1,
                     color);
@@ -176,7 +186,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * leftElement.w() / maxS * size;
             var asy = s * leftElement.h() / maxS * size;
 
-            renderTexture(leftElement.rl(), guiGraphics.pose(),
+            renderTexture(leftElement.resourceLocation(), guiGraphics.pose(),
                     left, left + asx, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
@@ -187,7 +197,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * clickLeftElement.w() / maxS * size;
             var asy = s * clickLeftElement.h() / maxS * size;
 
-            renderTexture(clickLeftElement.rl(), guiGraphics.pose(),
+            renderTexture(clickLeftElement.resourceLocation(), guiGraphics.pose(),
                     left, left + asx, centerY - asy / 2, centerY + asy / 2,
                     0, 1, 0, 1,
                     color);
@@ -200,7 +210,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * upElement.w() / maxS * size;
             var asy = s * upElement.h() / maxS * size;
 
-            renderTexture(upElement.rl(), guiGraphics.pose(),
+            renderTexture(upElement.resourceLocation(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, up, up + asy,
                     0, 1, 0, 1,
                     color);
@@ -211,7 +221,7 @@ public class FaceSelectorScreen extends Screen {
             var asx = s * clickUpElement.w() / maxS * size;
             var asy = s * clickUpElement.h() / maxS * size;
 
-            renderTexture(clickUpElement.rl(), guiGraphics.pose(),
+            renderTexture(clickUpElement.resourceLocation(), guiGraphics.pose(),
                     centerX - asx / 2, centerX + asx / 2, up, up + asy,
                     0, 1, 0, 1,
                     color);

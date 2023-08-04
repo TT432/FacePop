@@ -8,6 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 public record ImageElement(
         int w,
         int h,
-        ResourceLocation rl
+        ResourceLocation resourceLocation
 ) {
 }
