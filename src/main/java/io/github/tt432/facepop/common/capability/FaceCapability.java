@@ -38,6 +38,8 @@ public class FaceCapability implements INBTSerializable<CompoundTag> {
             packFace(defaultFaceBagLocation, new ResourceLocation(Facepop.MOD_ID, "question_mark")),
             packFace(defaultFaceBagLocation, new ResourceLocation(Facepop.MOD_ID, "sleeping"))
     ));
+    private int currentFacePage = 0;
+
 
     public void unlock(String faceBag) {
         unlockedFaceBag.add(faceBag);
@@ -113,6 +115,8 @@ public class FaceCapability implements INBTSerializable<CompoundTag> {
         wheelFaces.forEach(wf -> wheelFacesTag.add(StringTag.valueOf(wf)));
         result.put("wheelFacesTag", wheelFacesTag);
 
+        result.putInt("currentFacePage", currentFacePage);
+
         return result;
     }
 
@@ -132,6 +136,9 @@ public class FaceCapability implements INBTSerializable<CompoundTag> {
             wheelFaces.clear();
             wheelFacesTag.forEach(tag -> wheelFaces.add(tag.getAsString()));
         }
+
+        if (nbt.contains("currentFacePage"))
+            currentFacePage = nbt.getInt("currentFacePage");
     }
 
     public static final class Provider extends CapabilityProvider<Provider> implements ICapabilitySerializable<CompoundTag> {
