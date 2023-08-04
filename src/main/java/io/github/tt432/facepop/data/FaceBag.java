@@ -12,14 +12,14 @@ import java.util.List;
 public record FaceBag(
         ResourceLocation id,
         List<Face> faces,
-        ResourceLocation iconLocation,
+        ResourceLocation iconResourceLocation,
         boolean defaultUnlock,
         String lockMsgLangKey
 ) {
     public static final Codec<FaceBag> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(FaceBag::id),
             Face.CODEC.listOf().fieldOf("faces").forGetter(FaceBag::faces),
-            ResourceLocation.CODEC.fieldOf("icon").forGetter(FaceBag::iconLocation),
+            ResourceLocation.CODEC.fieldOf("icon").forGetter(FaceBag::iconResourceLocation),
             Codec.BOOL.optionalFieldOf("default_unlock", false).forGetter(FaceBag::defaultUnlock),
             Codec.STRING.optionalFieldOf("lock_message", "facebag.lock").forGetter(FaceBag::lockMsgLangKey)
     ).apply(instance, FaceBag::new));

@@ -39,7 +39,9 @@ public class FaceSettingScreen extends Screen {
     List<FaceBag> faceBagList;
     List<Face> faceList = new ArrayList<>();
 
-    int page;
+    // 当前页面
+    int currentPage;
+    // 子页面
     int subPlanePage;
 
     boolean init;
@@ -130,7 +132,7 @@ public class FaceSettingScreen extends Screen {
         UIElement wheelUIElement = new UIElement(bgWs, left, up, 16, 138, 25, 148);
         renderElement(WHEEL_BG, guiGraphics, wheelUIElement);
 
-        hoverWheel = FaceSelectorScreen.selectFace(mouseX, mouseY, wheelUIElement.centerX, wheelUIElement.centerY, wheelUIElement.sizeX);
+        this.hoverWheel = FaceSelectorScreen.selectFace(mouseX, mouseY, wheelUIElement.centerX, wheelUIElement.centerY, wheelUIElement.sizeX);
 
         renderWheel(guiGraphics, wheelUIElement.centerX, wheelUIElement.centerY, (int) wheelUIElement.sizeX,
                 selectWheel, hoverWheel, 124,
@@ -149,24 +151,34 @@ public class FaceSettingScreen extends Screen {
     }
 
 
+    /* 控件：右翻页 */
     public static final ResourceLocation RBE = new ResourceLocation(Facepop.MOD_ID, "textures/gui/buttons/7.png");
+
+    /* 控件：不可以右翻页 */
     public static final ResourceLocation RBE_H = new ResourceLocation(Facepop.MOD_ID, "textures/gui/buttons/5.png");
 
+    /* 控件：左翻页 */
     public static final ResourceLocation LBE = new ResourceLocation(Facepop.MOD_ID, "textures/gui/buttons/1.png");
+
+    /* 控件：不可以左翻页 */
     public static final ResourceLocation LBE_H = new ResourceLocation(Facepop.MOD_ID, "textures/gui/buttons/2.png");
 
+    /* 控件：可以返回 */
     public static final ResourceLocation RETURN_BE = new ResourceLocation(Facepop.MOD_ID, "textures/gui/buttons/9.png");
+
+    /* 控件：不可以返回 */
     public static final ResourceLocation RETURN_BE_H = new ResourceLocation(Facepop.MOD_ID, "textures/gui/buttons/10.png");
 
+    /* 初始化设置页面 */
     private void initSettingScreen(float bgWs, float uiLeft, float uiUp) {
         init = true;
 
         UIElement returnBe = new UIElement(bgWs, uiLeft, uiUp, 204, 261, 141, 158);
 
-        returnButton = (TextureButton) Button.builder(Component.empty(), button -> {
-            openedSubPlane = false;
-            selectFaceBag = -1;
-            subPlanePage = 0;
+        this.returnButton = (TextureButton) Button.builder(Component.empty(), button -> {
+            this.openedSubPlane = false;
+            this.selectFaceBag = -1;
+            this.subPlanePage = 0;
         }).bounds((int) returnBe.left, (int) returnBe.up, (int) returnBe.sizeX, (int) returnBe.sizeY).build(b -> {
             TextureButton result = new TextureButton((b));
             result.setLocation(RETURN_BE, RETURN_BE_H);
@@ -175,13 +187,13 @@ public class FaceSettingScreen extends Screen {
 
         UIElement lbe = new UIElement(bgWs, uiLeft, uiUp, 181, 198, 141, 158);
 
-        leftPageButton = (TextureButton) Button.builder(Component.empty(), button -> {
-            if (openedSubPlane) {
-                if (subPlanePage > 0)
-                    subPlanePage--;
+        this.leftPageButton = (TextureButton) Button.builder(Component.empty(), button -> {
+            if (this.openedSubPlane) {
+                if (this.subPlanePage > 0)
+                    this.subPlanePage--;
             } else {
-                if (page > 0)
-                    page--;
+                if (this.currentPage > 0)
+                    this.currentPage--;
             }
         }).bounds((int) lbe.left, (int) lbe.up, (int) lbe.sizeX, (int) lbe.sizeY).build(b -> {
             TextureButton result = new TextureButton((b));
@@ -191,13 +203,13 @@ public class FaceSettingScreen extends Screen {
 
         UIElement rbe = new UIElement(bgWs, uiLeft, uiUp, 267, 284, 141, 158);
 
-        rightPageButton = (TextureButton) Button.builder(Component.empty(), button -> {
+        this.rightPageButton = (TextureButton) Button.builder(Component.empty(), button -> {
             if (openedSubPlane) {
-                if (subPlanePage > faceList.size() / countPPage)
-                    subPlanePage++;
+                if (subPlanePage > faceList.size() / countPerPage)
+                    this.subPlanePage++;
             } else {
-                if (page > faceBagList.size() / countPPage)
-                    page++;
+                if (currentPage > (faceBagList.size() / countPerPage))
+                    this.currentPage++;
             }
         }).bounds((int) rbe.left, (int) rbe.up, (int) rbe.sizeX, (int) rbe.sizeY).build(b -> {
             TextureButton result = new TextureButton((b));
@@ -205,11 +217,12 @@ public class FaceSettingScreen extends Screen {
             return result;
         });
 
-        addRenderableWidget(returnButton);
-        addRenderableWidget(leftPageButton);
-        addRenderableWidget(rightPageButton);
+        this.addRenderableWidget(returnButton);
+        this.addRenderableWidget(leftPageButton);
+        this.addRenderableWidget(rightPageButton);
     }
 
+    /* 处理点击逻辑 */
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         if (hoverWheel != 0)
@@ -220,10 +233,13 @@ public class FaceSettingScreen extends Screen {
 
             if (faceBag.defaultUnlock() || Minecraft.getInstance().player.getCapability(FaceCapability.CAPABILITY)
                     .map(cap -> cap.canUse(faceBag.id().toString())).orElse(false)) {
-                openedSubPlane = true;
-                selectFaceBag = hoverFaceBag;
-                hoverFaceBag = -1;
-                faceList = faceBag.faces();
+                this.openedSubPlane = true;
+                this.selectFaceBag = hoverFaceBag;
+                this.hoverFaceBag = -1;
+                this.faceList = faceBag.faces();
+            } else {
+                // 这里是未解锁表情包处理逻辑
+                // 也就是说点击了没有解锁的表情包
             }
         }
 
@@ -235,6 +251,7 @@ public class FaceSettingScreen extends Screen {
         return super.mouseClicked(pMouseX, pMouseY, pButton);
     }
 
+    /* 表情包 Title */
     public static final ResourceLocation FACEBAG_FONT = new ResourceLocation(Facepop.MOD_ID, "textures/gui/words/bqb.png");
 
     List<UIElement> iconElements(float bgWs, float uiLeft, float uiUp) {
@@ -253,37 +270,38 @@ public class FaceSettingScreen extends Screen {
     public static final ResourceLocation FACE_ICON_1 = new ResourceLocation(Facepop.MOD_ID, "textures/gui/faceicon/1.png");
     public static final ResourceLocation FACE_ICON_2 = new ResourceLocation(Facepop.MOD_ID, "textures/gui/faceicon/2.png");
 
-    private static final int countPPage = 8;
+    private static final int countPerPage = 8;
 
+    /* 渲染表情包的按钮 */
     private void renderFaceBagButtons(GuiGraphics guiGraphics, float bgWs, float uiLeft, float uiUp, int mouseX, int mouseY) {
-        UIElement faceFontTex = new UIElement(bgWs, uiLeft, uiUp, 212, 248, 11, 24);
-        renderElement(FACEBAG_FONT, guiGraphics, faceFontTex);
+        UIElement faceFontTexture = new UIElement(bgWs, uiLeft, uiUp, 212, 248, 11, 24);
+        this.renderElement(FACEBAG_FONT, guiGraphics, faceFontTexture);
 
-        int faceBagListStart = page * countPPage;
-        int faceBagListEnd = Math.min((page + 1) * countPPage, faceBagList.size());
+        int faceBagListStart = currentPage * countPerPage;
+        int faceBagListEnd = Math.min((currentPage + 1) * countPerPage, faceBagList.size());
 
         boolean hoverFaceBagSeted = false;
 
         List<UIElement> iconUIElements = iconElements(bgWs, uiLeft, uiUp);
 
         for (int i = faceBagListStart; i < faceBagListEnd; i++) {
-            UIElement UIElement = iconUIElements.get(i);
+            UIElement element = iconUIElements.get(i);
 
-            float size = UIElement.sizeX;
-            float iconCX = UIElement.centerX;
-            float iconCY = UIElement.centerY;
+            float size = element.sizeX;
+            float iconCenterX = element.centerX;
+            float iconCenterY = element.centerY;
 
-            renderElement(FACE_ICON_1, guiGraphics, UIElement);
+            this.renderElement(FACE_ICON_1, guiGraphics, element);
 
             if (!hoverFaceBagSeted) {
-                hoverFaceBagSeted = testFaceBagButtonHover(mouseX, mouseY, i, UIElement.left, UIElement.up, UIElement.right, UIElement.bottom);
+                hoverFaceBagSeted = testFaceBagButtonHover(mouseX, mouseY, i, element.left, element.up, element.right, element.bottom);
 
                 if (hoverFaceBagSeted)
-                    renderElement(FACE_ICON_2, guiGraphics, UIElement);
+                    this.renderElement(FACE_ICON_2, guiGraphics, element);
             }
 
             FaceBag faceBag = faceBagList.get(i);
-            TextureAtlasSprite sprite = FacesTextureLoader.getInstance().get(faceBag.iconLocation());
+            TextureAtlasSprite sprite = FacesTextureLoader.getInstance().get(faceBag.iconResourceLocation());
             SpriteContents contents = sprite.contents();
             int spriteW = contents.width();
             int spriteH = contents.height();
@@ -292,21 +310,21 @@ public class FaceSettingScreen extends Screen {
             float actualHeight = spriteH / max * size / 2;
 
             renderTexture(sprite.atlasLocation(), guiGraphics.pose(),
-                    iconCX - actualWidth + 2, iconCX + actualWidth - 2,
-                    iconCY - actualHeight + 2, iconCY + actualHeight - 2,
+                    iconCenterX - actualWidth + 2, iconCenterX + actualWidth - 2,
+                    iconCenterY - actualHeight + 2, iconCenterY + actualHeight - 2,
                     sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(),
-                    0xFF_FF_FF_FF);
+                    // 判断是否未解锁
+                    faceBag.defaultUnlock() ? 0xFF_FF_FF_FF : 0x88_FF_FF_FF);
         }
 
-        if (!hoverFaceBagSeted)
-            hoverFaceBag = -1;
+        if (!hoverFaceBagSeted) this.hoverFaceBag = -1;
     }
 
     private boolean testFaceBagButtonHover(int mouseX, int mouseY,
                                            int index,
                                            float x, float y, float x1, float y1) {
         if (mouseX > x && mouseX < x1 && mouseY > y && mouseY < y1) {
-            hoverFaceBag = index;
+            this.hoverFaceBag = index;
 
             return true;
         }
@@ -316,31 +334,32 @@ public class FaceSettingScreen extends Screen {
 
     public static final ResourceLocation FACE_FONT = new ResourceLocation(Facepop.MOD_ID, "textures/gui/words/bq.png");
 
+    /* 渲染子面板 */
     private void renderSubPlane(GuiGraphics guiGraphics, float bgWs, float uiLeft, float uiUp, int mouseX, int mouseY) {
         UIElement faceFontTex = new UIElement(bgWs, uiLeft, uiUp, 220, 244, 11, 24);
-        renderElement(FACE_FONT, guiGraphics, faceFontTex);
+        this.renderElement(FACE_FONT, guiGraphics, faceFontTex);
 
-        int faceBagListStart = page * countPPage;
-        int faceBagListEnd = Math.min((page + 1) * countPPage, faceList.size());
+        int faceBagListStart = currentPage * countPerPage;
+        int faceBagListEnd = Math.min((currentPage + 1) * countPerPage, faceList.size());
 
         boolean hoverFaceSeted = false;
 
         List<UIElement> iconUIElements = iconElements(bgWs, uiLeft, uiUp);
 
         for (int i = faceBagListStart; i < faceBagListEnd; i++) {
-            UIElement UIElement = iconUIElements.get(i);
+            UIElement element = iconUIElements.get(i);
 
-            float size = UIElement.sizeX;
-            float iconCX = UIElement.centerX;
-            float iconCY = UIElement.centerY;
+            float size = element.sizeX;
+            float iconCenterX = element.centerX;
+            float iconCenterY = element.centerY;
 
-            renderElement(FACE_ICON_1, guiGraphics, UIElement);
+            this.renderElement(FACE_ICON_1, guiGraphics, element);
 
             if (!hoverFaceSeted) {
-                hoverFaceSeted = testFaceButtonHover(mouseX, mouseY, i, UIElement.left, UIElement.up, UIElement.right, UIElement.bottom);
+                hoverFaceSeted = testFaceButtonHover(mouseX, mouseY, i, element.left, element.up, element.right, element.bottom);
 
                 if (hoverFaceSeted)
-                    renderElement(FACE_ICON_2, guiGraphics, UIElement);
+                    renderElement(FACE_ICON_2, guiGraphics, element);
             }
 
             var faceBag = faceList.get(i);
@@ -353,8 +372,8 @@ public class FaceSettingScreen extends Screen {
             float actualHeight = spriteH / max * size / 2;
 
             renderTexture(sprite.atlasLocation(), guiGraphics.pose(),
-                    iconCX - actualWidth + 2, iconCX + actualWidth - 2,
-                    iconCY - actualHeight + 2, iconCY + actualHeight - 2,
+                    iconCenterX - actualWidth + 2, iconCenterX + actualWidth - 2,
+                    iconCenterY - actualHeight + 2, iconCenterY + actualHeight - 2,
                     sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(),
                     0xFF_FF_FF_FF);
         }
